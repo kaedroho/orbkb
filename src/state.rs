@@ -37,7 +37,7 @@ pub struct KeyboardState {
     pub lock_keys: LockKeyState,
 
     /// The keyboard layout
-    pub layout: &'static Layout,
+    pub layout: Layout,
 
     /// When set to true the lock key states will toggle when the keys are pressed
     ///
@@ -48,7 +48,7 @@ pub struct KeyboardState {
 
 impl KeyboardState {
     /// Creates a new KeyboardState instance
-    pub fn new(layout: &'static Layout) -> KeyboardState {
+    pub fn new(layout: Layout) -> KeyboardState {
         KeyboardState {
             pressed_keys: FixedBitSet::with_capacity(256),
             lock_keys: LockKeyState::empty(),

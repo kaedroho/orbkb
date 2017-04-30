@@ -6,5 +6,4 @@ authors = ["Karl Hobley <karl@kaed.uk>"]
 [dependencies]
 bitflags = "0.8"
 fixedbitset = "0.1"
-lazy_static = "0.2"
 maplit = "0.1"

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use keys::Key;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Layout {
     pub has_alt_gr_key: bool,
     pub key_symbol_map: HashMap<(u8, u8, Key), char>,
@@ -17,5 +17,5 @@ impl Layout {
 mod us;
 mod gb;
 
-pub use self::us::US;
-pub use self::gb::GB;
+pub use self::us::us;
+pub use self::gb::gb;
