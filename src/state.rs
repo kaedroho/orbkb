@@ -204,7 +204,7 @@ impl KeyboardState {
                             // Get symbol from layout
                             let group = self.get_group();
 
-                            if let Some(symbol) = self.layout.get_symbol(group, 0, key) {
+                            if let Some(symbol) = self.layout.get_symbol(group, 1, key) {
                                 action = Some(KeyboardAction::Symbol(symbol));
                             }
                         }
