@@ -9,3 +9,4 @@ Keyboard library for Orbital
 - Lock keys
 - Numpad (including actions when numlock is off)
 - Key repeat detection
+- Logical keyboard input
