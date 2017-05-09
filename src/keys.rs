@@ -1,9 +1,11 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum KeyType {
     /// Keys that represent alphabetic characters
     Alphabetic,
-    /// Keys that represent numerals and punctuation
-    NumeralsAndPunctuation,
+    /// Keys that represent numerals
+    Numeric,
+    /// Keys that represent punctuation
+    Punctuation,
     /// The numeric and '.' keys on the numpad (symbols, num lock, and enter keys not included)
     Numpad,
     /// Keys that represent controls such as enter, escape, backspace, and functions
@@ -301,11 +303,43 @@ impl Key {
         }
     }
 
+    /// Returns true if the key represents an alphabetic character
+    pub fn is_alphabetic(&self) -> bool {
+        self.key_type() == Some(KeyType::Alphabetic)
+    }
+
+    /// Returns true if the key represents a numeric character
+    ///
+    /// Note: this does not include the numpad keys.
+    pub fn is_numeric(&self) -> bool {
+        self.key_type() == Some(KeyType::Numeric)
+    }
+
+    /// Returns true if the key represents a punctuation character
+    pub fn is_punctuation(&self) -> bool {
+        self.key_type() == Some(KeyType::Punctuation)
+    }
+
+    /// Returns true if the key represents a control key
+    ///
+    /// For example: Enter, Caps lock, Page up, etc
+    pub fn is_control(&self) -> bool {
+        self.key_type() == Some(KeyType::Control)
+    }
+
+    /// Returns true if the key represents a numeric character on the numpad
+    ///
+    /// This includes all the numbers and the '.' key but not enter or any of the symbols
+    pub fn is_numpad(&self) -> bool {
+        self.key_type() == Some(KeyType::Numpad)
+    }
+
     /// Returns the type of the key which used to determine which modifers can alter the keys level
     pub fn key_type(&self) -> Option<KeyType> {
         match self.keycode() {
             16 ... 25 | 30 ... 38 | 44 ... 50 => Some(KeyType::Alphabetic),
-            2 ... 13 | 26 | 27 | 39 | 40 | 41 | 43 | 51 | 52 | 53 | 55 | 98 => Some(KeyType::NumeralsAndPunctuation),
+            2 ... 11 => Some(KeyType::Numeric),
+            12 | 13 | 26 | 27 | 39 | 40 | 41 | 43 | 51 | 52 | 53 | 55 | 98 => Some(KeyType::Punctuation),
             1 | 14 | 15 | 28 | 29 | 42 | 54 | 56 ... 70 | 74 | 78 | 87 | 88 | 96 | 97 | 99 | 100 | 102 ... 111 | 119 | 125 | 126 | 127  => Some(KeyType::Control),
             71 | 72 | 73 | 75 | 76 | 77 | 79 ... 83 => Some(KeyType::Numpad),
             _ => None,

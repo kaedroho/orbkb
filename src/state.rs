@@ -135,7 +135,7 @@ impl KeyboardState {
     pub fn get_key_level(&self, key_type: &KeyType) -> u8 {
         let shifted = match *key_type {
             KeyType::Alphabetic => self.shift() ^ self.caps_lock(),
-            KeyType::NumeralsAndPunctuation => self.shift(),
+            KeyType::Numeric | KeyType::Punctuation => self.shift(),
             KeyType::Numpad => !self.num_lock(),
             KeyType::Control => false,
         };
@@ -166,7 +166,7 @@ impl KeyboardState {
 
         if let Some(key_type) = key.key_type() {
             match key_type {
-                KeyType::Alphabetic | KeyType::NumeralsAndPunctuation => {
+                KeyType::Alphabetic | KeyType::Numeric | KeyType::Punctuation => {
                     if pressed {
                         // If a "control" modifier is also pressed, emit a command
                         // This handles cases like Ctrl+c and Alt+Tab
