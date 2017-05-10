@@ -2,7 +2,7 @@ use fixedbitset::FixedBitSet;
 
 use keys::{self, KeyType, Key};
 use layout::Layout;
-use event::{KeyboardEvent, KeyboardAction};
+use event::{KeyboardEvent, LogicalKeyboardEvent};
 
 bitflags! {
     pub flags Modifiers: u8 {
@@ -125,7 +125,7 @@ impl KeyboardState {
 
     /// Returns the level that is selected on the specified key type
     ///
-    /// Note: The symbol/action of each level is indicated by row on the keytop
+    /// Note: The symbol/command of each level is indicated by row on the keytop
     ///
     /// Different key types need to behave differently with regards to level switching:
     ///  * Alphabetic keys can be shifted by using either the shift key or caps lock (when both
@@ -147,7 +147,7 @@ impl KeyboardState {
     ///
     /// This alters the state and returns a KeyboardEvent
     pub fn actuate_key(&mut self, key: Key, pressed: bool) -> KeyboardEvent {
-        let mut action = None;
+        let mut logical = None;
 
         let mut repeat = false;
         if pressed {
@@ -168,10 +168,10 @@ impl KeyboardState {
             match key_type {
                 KeyType::Alphabetic | KeyType::Numeric | KeyType::Punctuation => {
                     if pressed {
-                        // If a "control" modifier is also pressed, emit a command
+                        // If a "control" modifier is also pressed, emit a logical event
                         // This handles cases like Ctrl+c and Alt+Tab
                         if self.ctrl() || self.alt() || self.sup() {
-                            action = Some(KeyboardAction::Command(self.get_modifiers(), key));
+                            logical = Some(LogicalKeyboardEvent::Command(self.get_modifiers(), key));
                         } else {
                             // Get symbol from layout and return it if one exists
                             // This handles general typing
@@ -179,7 +179,7 @@ impl KeyboardState {
                             let key_level = self.get_key_level(&key_type);
 
                             if let Some(symbol) = self.layout.get_symbol(group, key_level, key) {
-                                action = Some(KeyboardAction::Symbol(symbol));
+                                logical = Some(LogicalKeyboardEvent::Symbol(symbol));
                             }
                         }
                     }
@@ -195,7 +195,7 @@ impl KeyboardState {
                             }
                         }
 
-                        action = Some(KeyboardAction::Command(self.get_modifiers(), key));
+                        logical = Some(LogicalKeyboardEvent::Command(self.get_modifiers(), key));
                     }
                 }
                 KeyType::Numpad => {
@@ -205,7 +205,7 @@ impl KeyboardState {
                             let group = self.get_group();
 
                             if let Some(symbol) = self.layout.get_symbol(group, 1, key) {
-                                action = Some(KeyboardAction::Symbol(symbol));
+                                logical = Some(LogicalKeyboardEvent::Symbol(symbol));
                             }
                         }
                     } else {
@@ -227,7 +227,7 @@ impl KeyboardState {
                             };
 
                             if let Some(newkey) = newkey {
-                                action = Some(KeyboardAction::Command(self.get_modifiers(), newkey));
+                                logical = Some(LogicalKeyboardEvent::Command(self.get_modifiers(), newkey));
                             }
                         }
                     }
@@ -239,7 +239,7 @@ impl KeyboardState {
             key: key,
             pressed: pressed,
             repeat: repeat,
-            action: action,
+            logical: logical,
         }
     }
 }
